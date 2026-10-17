@@ -19,12 +19,15 @@ export interface OrbitStackItem {
   initials?: string;
   stat?: string;
   image?: string;
+  href?: string;
 }
 
 interface OrbitCardStackProps {
   items?: OrbitStackItem[];
   className?: string;
   cardClassName?: string;
+  showPortrait?: boolean;
+  label?: string;
   defaultActiveIndex?: number;
   spread?: number;
   lift?: number;
@@ -147,6 +150,8 @@ export function OrbitCardStack({
   items = defaultItems,
   className,
   cardClassName,
+  showPortrait = true,
+  label = "Project card stack",
   defaultActiveIndex = 2,
   spread = 168,
   lift = 34,
@@ -199,17 +204,17 @@ export function OrbitCardStack({
   return (
     <div
       className={cn(
-        "relative flex min-h-full w-full items-center justify-center overflow-hidden p-8",
+        "relative flex min-h-full w-full items-center justify-center overflow-visible px-8 py-12",
         className,
       )}
     >
       <div
         ref={stageRef}
-        className="relative h-[470px] w-full max-w-[980px]"
+        className="relative h-[680px] w-full max-w-[980px]"
         onMouseLeave={close}
         onBlur={leaveFocus}
         role="list"
-        aria-label="Project card stack"
+        aria-label={label}
       >
         {cards.map((item, index) => {
           const position = open ? layouts[index]!.open : layouts[index]!.closed;
@@ -260,23 +265,31 @@ export function OrbitCardStack({
                 }
               }}
             >
-              <div className="relative">
+              {showPortrait && <div className="relative shrink-0">
                 <Portrait item={item} />
-                <span className="absolute right-3 top-3 grid size-11 place-items-center rounded-full bg-zinc-950 text-white shadow-lg shadow-black/20">
-                  <ArrowUpRight className="size-4" aria-hidden />
-                </span>
-              </div>
-              <div className="px-2 pb-2 pt-6">
+                {item.href ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`Visit ${item.name}`}
+                    className="absolute right-3 top-3 grid size-11 place-items-center rounded-full bg-zinc-950 text-white shadow-lg shadow-black/20"
+                  >
+                    <ArrowUpRight className="size-4" aria-hidden />
+                  </a>
+                ) : null}
+              </div>}
+              <div className="orbit-card-content px-2 pb-2 pt-6">
                 <p className="text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-zinc-500">
                   {item.role}
                 </p>
                 <h3 className="mt-2 text-[2rem] font-semibold leading-none tracking-[-0.04em] text-zinc-950">
                   {item.name}
                 </h3>
-                <p className="mt-4 max-w-[17rem] text-[0.98rem] font-medium leading-[1.42] tracking-[-0.01em] text-zinc-700">
+                <p className="orbit-card-description mt-4 max-w-[17rem] text-[0.98rem] font-medium leading-[1.42] tracking-[-0.01em] text-zinc-700">
                   {item.description}
                 </p>
-                <div className="mt-5 border-t border-black/10 pt-4 text-[0.68rem] font-bold uppercase tracking-[0.2em] text-zinc-500">
+                <div className="orbit-card-footer mt-5 border-t border-black/10 pt-4 text-[0.68rem] font-bold uppercase tracking-[0.2em] text-zinc-500">
                   {item.stat ?? "Profile"}
                 </div>
               </div>

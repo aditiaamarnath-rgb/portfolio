@@ -3,7 +3,6 @@ import { useState, useEffect, useRef } from "react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Mascot } from "page-mascot";
 import arrayRegularFont from "../fonts/Array-Regular.otf";
-import aboutCorkboard from "./assets/about-corkboard.png";
 import bikeSticker from "./assets/bike-sticker.png";
 import cameraSticker from "./assets/camera-sticker.png";
 import paintSticker from "./assets/paint-sticker.png";
@@ -32,7 +31,7 @@ function InjectFonts() {
         const link = document.createElement("link");
         link.rel = "stylesheet";
         link.href =
-            "https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Inter:wght@400;600;700&family=Nunito:wght@400;600;700&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap";
+            "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;700&family=Caveat:wght@400;600;700&family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Inter:wght@400;600;700&family=Nunito:wght@400;600;700&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap";
         document.head.appendChild(link);
     }, []);
     return null;
@@ -45,10 +44,10 @@ const C = {
     moss:      "#e9efe7",
     wood:      "#362F22",
     petrol:    "#809ba5",
-    bg:        "#141b20",
-    bgDeep:    "#141b20",
-    bgMid:     "#303d47",
-    cream:     "#303d47",
+    bg:        "#1c1c1c",
+    bgDeep:    "#1c1c1c",
+    bgMid:     "#f4f0e7",
+    cream:     "#f4f0e7",
     paper:     "#e6eaed",
     blush:     "#c0cab8",
     rose:      "#b97d7b",
@@ -66,22 +65,13 @@ const ABOUT = {
     twine: "#8A6D4B",
 };
 
-function scrollTo(id) {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
-}
-
 /* ── Section heading with diamond bullet ── */
-function SectionHeading({ children, light = false, fontFamily = "'Playfair Display', serif", fontSize = "clamp(32px,5vw,52px)" }) {
+function SectionHeading({ children, fontSize = "clamp(46px,5vw,76px)", marginBottom = 36 }) {
     return (
-        <div style={{ marginBottom: 36 }}>
-            <h2 style={{
-                fontFamily,
+        <div style={{ marginBottom }}>
+            <h2 className="page-heading" style={{
                 fontSize,
-                fontWeight: 900,
-                color: light ? C.lightText : C.ink,
-                lineHeight: 1,
-                letterSpacing: "-0.02em",
+                color: C.ink,
                 margin: 0,
             }}>
                 {children}
@@ -92,110 +82,207 @@ function SectionHeading({ children, light = false, fontFamily = "'Playfair Displ
 
 /* ══════════════════ NAV ══════════════════ */
 function NavBar() {
-    const [scrolled, setScrolled] = useState(false);
-    useEffect(() => {
-        const h = () => setScrolled(window.scrollY > 30);
-        window.addEventListener("scroll", h);
-        return () => window.removeEventListener("scroll", h);
-    }, []);
     return (
-        <nav style={{
-            display: "flex", justifyContent: "space-between", alignItems: "center",
-            padding: "16px 52px",
-            background: scrolled ? C.bgDeep : "transparent",
-            borderBottom: scrolled ? `2px solid ${C.accent}` : "2px solid transparent",
-            position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-            transition: "all 0.3s",
-        }}>
-      <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, color: C.blush, letterSpacing: "0.01em" }}>
-        <span style={{ color: C.accent }}></span> Aditi Amarnath
-      </span>
-            <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-                {[["About Me","aboutme"],["Experience","experience"],["Projects","projects"],["Contact Me!","contactme"]].map(([label, id]) => (
-                    <button key={id} onClick={() => scrollTo(id)} style={{
-                        fontFamily: "'Nunito', sans-serif", fontSize: 13, fontWeight: 700,
-                        color: C.blush, background: "transparent",
-                        border: "2px solid transparent", borderRadius: 4,
-                        padding: "6px 18px", cursor: "pointer",
-                        letterSpacing: "0.04em", textTransform: "uppercase",
-                        transition: "all 0.2s",
-                    }}
-                            onMouseEnter={e => { e.currentTarget.style.background = C.cream; e.currentTarget.style.color = C.ink; e.currentTarget.style.borderColor = C.cream; }}
-                            onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = C.blush; e.currentTarget.style.borderColor = "transparent"; }}
-                    >{label === "Contact Me!" ? <span style={{ background: C.rose, color: C.ink, padding: "6px 18px", borderRadius: 4, fontFamily: "'Nunito', sans-serif", fontSize: 13, fontWeight: 700, letterSpacing: "0.04em" }}>{label}</span> : label}</button>
-                ))}
-            </div>
+        <nav className="letter-nav" aria-label="Main navigation">
+            {[["home", "home"], ["about", "aboutme"], ["experience", "experience"], ["projects", "projects"], ["contact", "contactme"]].map(([label, id]) => (
+                <a key={id} href={`#${id}`}>{label}</a>
+            ))}
         </nav>
     );
 }
 
 /* ══════════════════ HERO ══════════════════ */
 function HeroSection() {
-    const [vis, setVis] = useState(false);
-    useEffect(() => { setTimeout(() => setVis(true), 150); }, []);
     return (
-        <section style={{
-            minHeight: "100vh",
-            background: C.bg,
-            display: "flex",
-            flexDirection: "column",
-            position: "relative",
-            overflow: "hidden",
-        }}>
-            {/* big bg text */}
-            <div style={{ position: "absolute", bottom: -20, right: -10, fontFamily: "'Playfair Display', serif", fontSize: "clamp(100px,18vw,200px)", fontWeight: 900, color: "rgba(239,232,202,0.16)", lineHeight: 1, userSelect: "none", letterSpacing: "-0.05em", pointerEvents: "none" }}>
+        <section id="home" className="letter-hero" aria-labelledby="hero-title">
+            <NavBar />
+            <HeroStickers />
+            <div className="letter-intro">
+                <div className="letter-greeting">
+                <h1 id="hero-title" className="page-heading">hello, I’m Aditi.</h1>
 
-            </div>
-
-            <div style={{ flex: 1, display: "flex", alignItems: "center", padding: "110px 52px 60px", gap: 60, position: "relative", zIndex: 2 }}>
-                {/* LEFT */}
-                <div style={{ flex: 1, opacity: vis ? 1 : 0, transform: vis ? "translateX(24px)" : "translate(24px, 28px)", transition: "all 0.9s ease" }}>
-                    <div style={{ display: "inline-block", background: C.cream, color: C.ink, fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase", padding: "5px 14px", borderRadius: 2, marginBottom: 20 }}>
-                        CS and Statistics Major · Class of 2029
-                    </div>
-                    <div className="hero-greeting">
-                        <Mascot
-                            className="hero-mascot"
-                            directions={`${import.meta.env.BASE_URL}mascots/aditi-cool-directions.webp`}
-                            reactions={`${import.meta.env.BASE_URL}mascots/aditi-cool-reactions.webp`}
-                            size={260}
-                            label="Aditi's mascot"
-                        />
-                        <div>
-                            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(56px,9vw,100px)", fontWeight: 900, color: C.lightText, lineHeight: 0.95, letterSpacing: "-0.03em", margin: "0 0 6px" }}>
-                                Hello,
-                            </h1>
-                            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(56px,9vw,100px)", fontWeight: 900, color: C.rose, lineHeight: 0.95, letterSpacing: "-0.03em", margin: 0 }}>
-                                I'm Aditi!
-                            </h1>
-                        </div>
-                    </div>
-
-                    {/* about blurb as post-it */}
-                    <div style={{ position: "relative", display: "inline-block", maxWidth: 420, transform: "rotate(-1deg)" }}>
-                        <div style={{ background: C.paper, border: `3px solid ${C.ink}`, borderRadius: 3, padding: "22px 26px", boxShadow: "5px 5px 0 rgba(0,0,0,0.35)" }}>
-                            <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 15, color: C.ink, lineHeight: 1.75, margin: 0 }}>
-                                Hi! I'm passionate about software development, data analytics, and building technology-driven solutions that create real-world impact. This website highlights my projects, technical skills, and experiences as I continue growing as a developer and aspiring data professional.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div style={{ marginTop: 32, display: "flex", gap: 12, flexWrap: "wrap" }}>
-                        <button onClick={() => scrollTo("projects")} style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: 13, letterSpacing: "0.06em", textTransform: "uppercase", background: C.rose, color: C.ink, border: `3px solid ${C.ink}`, borderRadius: 4, padding: "12px 28px", cursor: "pointer", boxShadow: "4px 4px 0 rgba(0,0,0,0.3)", transition: "transform 0.15s, box-shadow 0.15s" }}
-                                onMouseEnter={e => { e.currentTarget.style.transform = "translate(-2px,-2px)"; e.currentTarget.style.boxShadow = "6px 6px 0 rgba(0,0,0,0.3)"; }}
-                                onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "4px 4px 0 rgba(0,0,0,0.3)"; }}>
-                            View Projects →
-                        </button>
-                        <button onClick={() => scrollTo("contactme")} style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: 13, letterSpacing: "0.06em", textTransform: "uppercase", background: "transparent", color: C.cream, border: `3px solid ${C.cream}`, borderRadius: 4, padding: "12px 28px", cursor: "pointer", boxShadow: "4px 4px 0 rgba(0,0,0,0.2)", transition: "transform 0.15s, box-shadow 0.15s" }}
-                                onMouseEnter={e => { e.currentTarget.style.transform = "translate(-2px,-2px)"; e.currentTarget.style.boxShadow = "6px 6px 0 rgba(0,0,0,0.2)"; }}
-                                onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "4px 4px 0 rgba(0,0,0,0.2)"; }}>
-                            Get in Touch
-                        </button>
-                    </div>
                 </div>
+            <div className="letter-mascot-stamp">
+                <Mascot
+                    className="letter-mascot"
+                    directions={`${import.meta.env.BASE_URL}mascots/aditi-cool-directions.webp`}
+                    reactions={`${import.meta.env.BASE_URL}mascots/aditi-cool-reactions.webp`}
+                    size={230}
+                    label="Aditi’s mascot — click to say hello"
+                />
+            </div>
+                <p>I’m studying computer science and statistics at the University of Wisconsin–Madison. I love making things, finding patterns, and turning little ideas into something useful.</p>
+                <p>A collection of my projects, experiences, and a little bit of me. A lot more text blah blah blah blah blaaaaaaaaaaahhhhhh. blsssffffah blah blah blahfjk ldsjlsljks blaaaaaaaaaaahhhhhh.</p>
 
+                <a className="letter-contact" href="#contactme">let’s connect</a>
             </div>
         </section>
+    );
+}
+
+function HeroStickers() {
+    const boardRef = useRef(null);
+    const dragState = useRef(null);
+    const hobbyStickers = [
+        {
+            id: "camera",
+            src: cameraSticker,
+            alt: "Camera sticker",
+            label: "I like taking pictures of nature and little things. I also create videos of everyday pretty things.",
+            x: 22,
+            y: 22,
+            width: "clamp(124px, 11vw, 170px)",
+            rotate: "-5deg",
+        },
+        {
+            id: "headphones",
+            src: headphonesSticker,
+            alt: "Headphones sticker",
+            label: "My favorite genre is synth pop and RnB. My top artists currently are Tame Impala, the Marias, and Seventeen.",
+            x: 68,
+            y: 18,
+            width: "clamp(110px, 9.5vw, 148px)",
+            rotate: "8deg",
+        },
+        {
+            id: "paint",
+            src: paintSticker,
+            alt: "Paint brushes sticker",
+            label: "I love anything artistic, but especially painting with watercolor or gouache. My toxic trait is thinking I can DIY anything instead of buying it.",
+            x: 80,
+            y: 52,
+            width: "clamp(104px, 9vw, 144px)",
+            rotate: "4deg",
+        },
+        {
+            id: "bike",
+            src: bikeSticker,
+            alt: "Bike with flowers sticker",
+            label: "When I'm stressed, I like to bike on long trails, especially if they're scenic and not hilly.",
+            x: 28,
+            y: 67,
+            width: "clamp(150px, 13.5vw, 208px)",
+            rotate: "13deg",
+        },
+        {
+            id: "polish",
+            src: nailPolishSticker,
+            alt: "Nail polish sticker",
+            label: "I have been getting into doing my nails. I do my friends' nails and also create press-ons.",
+            x: 62,
+            y: 83,
+            width: "clamp(142px, 12vw, 194px)",
+            rotate: "4deg",
+        },
+    ];
+    const [stickerPositions, setStickerPositions] = useState({});
+    const [draggingSticker, setDraggingSticker] = useState(null);
+
+    const beginStickerDrag = (event, sticker) => {
+        if (event.pointerType === "mouse" && event.button !== 0) return;
+
+        const board = boardRef.current;
+        if (!board) return;
+
+        event.preventDefault();
+        event.currentTarget.setPointerCapture(event.pointerId);
+
+        const rect = board.getBoundingClientRect();
+        const stickerRect = event.currentTarget.getBoundingClientRect();
+        const currentPosition = {
+            x: ((stickerRect.left + stickerRect.width / 2 - rect.left) / rect.width) * 100,
+            y: ((stickerRect.top + stickerRect.height / 2 - rect.top) / rect.height) * 100,
+        };
+        dragState.current = {
+            id: sticker.id,
+            rect,
+            halfWidth: stickerRect.width / 2 + 10,
+            halfHeight: stickerRect.height / 2 + 10,
+            startPointerX: event.clientX,
+            startPointerY: event.clientY,
+            startX: currentPosition.x,
+            startY: currentPosition.y,
+        };
+        setDraggingSticker(sticker.id);
+    };
+
+    const moveSticker = (event) => {
+        const drag = dragState.current;
+        if (!drag) return;
+
+        const rect = boardRef.current.getBoundingClientRect();
+        const nextX = drag.startX / 100 * rect.width + event.clientX - drag.startPointerX;
+        const nextY = drag.startY / 100 * rect.height + event.clientY - drag.startPointerY;
+        const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+        const minX = drag.halfWidth;
+        const maxX = rect.width - drag.halfWidth;
+        const minY = drag.halfHeight;
+        const maxY = rect.height - drag.halfHeight;
+        const blocked = [...boardRef.current.closest('section').querySelectorAll('.letter-greeting h1, .letter-intro p, .letter-contact, .letter-nav')].map((element) => {
+            const text = element.getBoundingClientRect();
+            return {
+                left: text.left - rect.left - drag.halfWidth,
+                right: text.right - rect.left + drag.halfWidth,
+                top: text.top - rect.top - drag.halfHeight,
+                bottom: text.bottom - rect.top + drag.halfHeight,
+            };
+        });
+        const x = clamp(nextX, minX, maxX);
+        const y = clamp(nextY, minY, maxY);
+        const allowed = (point) => !blocked.some((area) => point.x > area.left && point.x < area.right && point.y > area.top && point.y < area.bottom);
+        // Test the nearest edges of every protected text area, including corners.
+        const xs = [x, minX, maxX, ...blocked.flatMap((area) => [area.left, area.right])];
+        const ys = [y, minY, maxY, ...blocked.flatMap((area) => [area.top, area.bottom])];
+        const candidates = xs.flatMap((cx) => ys.map((cy) => ({ x: clamp(cx, minX, maxX), y: clamp(cy, minY, maxY) }))).filter(allowed);
+        const position = candidates.reduce((best, point) => !best || Math.hypot(point.x - x, point.y - y) < Math.hypot(best.x - x, best.y - y) ? point : best, null);
+        if (!position) return;
+        setStickerPositions((positions) => ({
+            ...positions,
+            [drag.id]: { x: position.x / rect.width * 100, y: position.y / rect.height * 100 },
+        }));
+    };
+
+    const endStickerDrag = (event) => {
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+        }
+
+        dragState.current = null;
+        setDraggingSticker(null);
+    };
+
+    return (
+                <div className="about-draggable-sticker-layer hero-sticker-layer" ref={boardRef} aria-label="Draggable hobby stickers">
+
+
+                    {hobbyStickers.map((sticker) => {
+                        const position = stickerPositions[sticker.id];
+
+                        return (
+                            <button
+                                key={sticker.id}
+                                type="button"
+                                className={`about-draggable-sticker ${draggingSticker === sticker.id ? "is-dragging" : ""}`}
+                                aria-label={`Drag ${sticker.alt}`}
+                                onPointerDown={(event) => beginStickerDrag(event, sticker)}
+                                onPointerMove={moveSticker}
+                                onPointerUp={endStickerDrag}
+                                onPointerCancel={endStickerDrag}
+                                style={{
+                                    "--sticker-width": sticker.width,
+                                    "--sticker-rotate": sticker.rotate,
+                                    "--initial-sticker-x": sticker.x,
+                                    "--initial-sticker-y": sticker.y,
+                                    left: position ? `${position.x}%` : undefined,
+                                    top: position ? `${position.y}%` : undefined,
+                                }}
+                            >
+                                <img src={sticker.src} alt="" draggable="false" />
+                                <span className="about-hobby-blurb">{sticker.label}</span>
+                            </button>
+                        );
+                    })}
+                </div>
     );
 }
 
@@ -211,122 +298,10 @@ function AboutStack({ children, tilt, yOffset = 0, zIndex = 1 }) {
 }
 
 function AboutSection() {
-    const boardRef = useRef(null);
-    const dragState = useRef(null);
-    const hobbyStickers = [
-        {
-            id: "camera",
-            src: cameraSticker,
-            alt: "Camera sticker",
-            label: "I like taking pictures of nature and little things. I also create videos of everyday pretty things.",
-            x: 43,
-            y: 43,
-            width: "clamp(92px, 8vw, 124px)",
-            rotate: "-5deg",
-        },
-        {
-            id: "headphones",
-            src: headphonesSticker,
-            alt: "Headphones sticker",
-            label: "My favorite genre is synth pop and RnB. My top artists currently are Tame Impala, the Marias, and Seventeen.",
-            x: 54,
-            y: 37,
-            width: "clamp(82px, 7vw, 108px)",
-            rotate: "8deg",
-        },
-        {
-            id: "paint",
-            src: paintSticker,
-            alt: "Paint brushes sticker",
-            label: "I love anything artistic, but especially painting with watercolor or gouache. My toxic trait is thinking I can DIY anything instead of buying it.",
-            x: 43,
-            y: 61,
-            width: "clamp(76px, 6.6vw, 104px)",
-            rotate: "4deg",
-        },
-        {
-            id: "bike",
-            src: bikeSticker,
-            alt: "Bike with flowers sticker",
-            label: "When I'm stressed, I like to bike on long trails, especially if they're scenic and not hilly.",
-            x: 56,
-            y: 55,
-            width: "clamp(112px, 10vw, 152px)",
-            rotate: "13deg",
-        },
-        {
-            id: "polish",
-            src: nailPolishSticker,
-            alt: "Nail polish sticker",
-            label: "I have been getting into doing my nails. I do my friends' nails and also create press-ons.",
-            x: 50,
-            y: 76,
-            width: "clamp(106px, 9vw, 142px)",
-            rotate: "4deg",
-        },
-    ];
-    const [stickerPositions, setStickerPositions] = useState(() =>
-        Object.fromEntries(hobbyStickers.map(({ id, x, y }) => [id, { x, y }])),
-    );
-    const [draggingSticker, setDraggingSticker] = useState(null);
-
-    const beginStickerDrag = (event, sticker) => {
-        if (event.pointerType === "mouse" && event.button !== 0) return;
-
-        const board = boardRef.current;
-        if (!board) return;
-
-        event.preventDefault();
-        event.currentTarget.setPointerCapture(event.pointerId);
-
-        const rect = board.getBoundingClientRect();
-        const currentPosition = stickerPositions[sticker.id];
-        dragState.current = {
-            id: sticker.id,
-            rect,
-            startPointerX: event.clientX,
-            startPointerY: event.clientY,
-            startX: currentPosition.x,
-            startY: currentPosition.y,
-        };
-        setDraggingSticker(sticker.id);
-    };
-
-    const moveSticker = (event) => {
-        const drag = dragState.current;
-        if (!drag) return;
-
-        const nextX = drag.startX + ((event.clientX - drag.startPointerX) / drag.rect.width) * 100;
-        const nextY = drag.startY + ((event.clientY - drag.startPointerY) / drag.rect.height) * 100;
-        const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-
-        setStickerPositions((positions) => ({
-            ...positions,
-            [drag.id]: {
-                x: clamp(nextX, 6, 94),
-                y: clamp(nextY, 10, 90),
-            },
-        }));
-    };
-
-    const endStickerDrag = (event) => {
-        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-            event.currentTarget.releasePointerCapture(event.pointerId);
-        }
-
-        dragState.current = null;
-        setDraggingSticker(null);
-    };
-
     return (
         <section id="aboutme" className="about-corkboard-section" aria-label="About Me">
-            <div className="about-corkboard-frame" ref={boardRef}>
-                <img
-                    src={aboutCorkboard}
-                    alt=""
-                    aria-hidden="true"
-                    className="about-corkboard-image"
-                />
+            <SectionHeading>about me</SectionHeading>
+            <div className="about-corkboard-frame">
                 <div className="about-corkboard-postits about-stack-grid">
                     <AboutStack tilt={-2} yOffset={16} zIndex={30}>
                         <article className="about-paper-surface about-ref-torn-teal about-paper-ref-teal about-board-postit">
@@ -360,6 +335,8 @@ function AboutSection() {
                             <div className="about-paper-section about-paper-heading">
                                 <span style={{ fontFamily: "'Caveat', cursive", fontSize: 19, fontWeight: 700, color: ABOUT.scrapInk, opacity: 0.62, textTransform: "uppercase", marginBottom: 8, display: "block" }}>Vibe</span>
                                 <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 32, fontWeight: 900, color: ABOUT.scrapInk, margin: 0 }}>Hobbies</h3>
+                                <p className="hobbies-paper-copy">Photography, synth pop &amp; RnB, watercolor painting, scenic bike rides, and making press-on nails.</p>
+                                <a className="paper-hobby-link" href="#home">Find my hobby stickers ↑</a>
                             </div>
                         </article>
                     </AboutStack>
@@ -394,33 +371,7 @@ function AboutSection() {
                         </article>
                     </AboutStack>
                 </div>
-                <div className="about-draggable-sticker-layer" aria-label="Draggable hobby stickers">
-                    {hobbyStickers.map((sticker) => {
-                        const position = stickerPositions[sticker.id];
 
-                        return (
-                            <button
-                                key={sticker.id}
-                                type="button"
-                                className={`about-draggable-sticker ${draggingSticker === sticker.id ? "is-dragging" : ""}`}
-                                aria-label={`Drag ${sticker.alt}`}
-                                onPointerDown={(event) => beginStickerDrag(event, sticker)}
-                                onPointerMove={moveSticker}
-                                onPointerUp={endStickerDrag}
-                                onPointerCancel={endStickerDrag}
-                                style={{
-                                    "--sticker-width": sticker.width,
-                                    "--sticker-rotate": sticker.rotate,
-                                    left: `${position.x}%`,
-                                    top: `${position.y}%`,
-                                }}
-                            >
-                                <img src={sticker.src} alt="" draggable="false" />
-                                <span className="about-hobby-blurb">{sticker.label}</span>
-                            </button>
-                        );
-                    })}
-                </div>
             </div>
         </section>
     );
@@ -435,7 +386,7 @@ const PROJECTS = [
 ];
 const DEFAULT_PROJECT_INDEX = 0;
 
-function ExperienceSection() {
+function ProjectsSection() {
     const [active, setActive] = useState(DEFAULT_PROJECT_INDEX);
     const p = PROJECTS[active];
     const projectTags = p.tags ?? [];
@@ -457,12 +408,12 @@ function ExperienceSection() {
     ) : null;
 
     return (
-        <section id="experience" style={{ background: C.cream, padding: "72px clamp(18px, 4vw, 52px) 96px", position: "relative", overflow: "hidden" }}>
+        <section id="projects" style={{ background: C.cream, padding: "72px clamp(18px, 4vw, 52px) 96px", position: "relative", overflow: "hidden" }}>
 
-            <SectionHeading>Experiences</SectionHeading>
+            <SectionHeading>projects</SectionHeading>
 
             <div className="projects-shell">
-                <div className="project-folder-stack" role="tablist" aria-label="Experiences">
+                <div className="project-folder-stack" role="tablist" aria-label="Projects">
                     {folderLayers.map((layer) => (
                         <img
                             key={layer.name}
@@ -481,10 +432,10 @@ function ExperienceSection() {
                             <button
                                 key={proj.tab}
                                 type="button"
-                                id={`experience-tab-${projectIndex}`}
+                                id={`project-tab-${projectIndex}`}
                                 role="tab"
                                 aria-selected={active === projectIndex}
-                                aria-controls="experience-panel"
+                                aria-controls="project-panel"
                                 className={`project-folder-label ${className} ${active === projectIndex ? "is-active" : ""}`}
                                 onClick={() => setActive(projectIndex)}
                             >
@@ -495,9 +446,9 @@ function ExperienceSection() {
 
                     <article
                         key={active}
-                        id="experience-panel"
+                        id="project-panel"
                         role="tabpanel"
-                        aria-labelledby={`experience-tab-${active}`}
+                        aria-labelledby={`project-tab-${active}`}
                         className={`project-file-paper project-file-paper-${activeFolderLayer.name}`}
                         style={{
                             "--paper-accent": activeFolderLayer.paperAccent,
@@ -577,45 +528,38 @@ function ExperienceSection() {
     );
 }
 
-const PROJECT_CARDS = PROJECTS.map((project) => ({
-    name: project.title,
-    role: project.badge,
-    description: project.desc.split(". ")[0] + ".",
-    accent: project.color,
-    initials: project.tab.slice(0, 2).toUpperCase(),
-    stat: project.tags?.join(" · ") ?? project.year,
-    image: project.image,
+const EXPERIENCES = [
+        { folder: "HGS", year: "Summer 2026", title: "Cloud Analytics Intern", sub: "At Hinduja Group Services, I helped write the technical spec for Databridge, a financial data platform built natively on Microsoft Fabric. That meant working through the OneLake medallion architecture, the Direct Lake semantic layer, capacity tiering, and security, all tracked in a 17-item decision register. I also built a Power BI semantic model by flattening a parent-child employee hierarchy into a dimension table with a 7-relationship star schema, then added an EDA agent on top as an AI proof-of-concept." },
+        { folder: "Undergrad Research", year: "Fall 2026", title: "Research Assistant", sub: "As an Undergraduate Research Assistant in Prof. Andi Wang's lab in the Industrial Engineering department, I'm studying Gaussian processes, optimization, and probabilistic network models and how they apply to real engineering problems. Day to day, that means reading and summarizing research papers, implementing methods in Python and R to run experiments, and presenting my progress to Prof. Wang every week. I'm also part of the Undergraduate Research Scholars program, a year-long mentored research experience with weekly seminars." },
+        { folder: "VP", year: "Fall 2022 - 2025", title: "Teaching Assistant", sub: "At Youth and Government in Naperville, I served as school-wide Vice President and state-wide Assistant Director of Lobbyists over four years. I drove the passage of bills on recidivism and gambling advertisements, both approved unanimously at the state level. I was also recognized as Most Effective Lobbyist at the 2023 statewide conference." },
+        { folder: "Volunteer", year: "2024 - 2025", title: "Main Desk & Central Supply Volunteer", sub: "At Rush Copley Medical Center, I volunteered at the main desk and in central supply for about a year, logging 96 hours. At the desk, I helped 50+ patients and visitors per shift with directions and questions in a fast-paced hospital environment. I also handled the weekly stocking and delivery of medical supplies across multiple departments." },
+        { folder: "Instructor", year: "2024 - Now", title: "Music & Dance Suite", sub: "At The Music and Dance Suite, I taught private piano lessons for two years, building customized lesson plans for 20+ students. I adapted my techniques for neurodiverse and nonverbal learners so every student could make progress in a way that worked for them. I also organized and led performance recitals, which boosted student involvement and kept students coming back." },
+    ];
+
+const EXPERIENCE_CARDS = EXPERIENCES.map((experience) => ({
+    name: experience.title,
+    role: experience.folder,
+    description: experience.sub,
+    stat: experience.year,
 }));
 
-function ProjectsSection() {
-    const [active, setActive] = useState(DEFAULT_PROJECT_INDEX);
-    const project = PROJECTS[active];
-
+function ExperienceSection() {
     return (
-        <section id="projects" style={{ background: C.cream, padding: "72px clamp(18px, 4vw, 52px) 96px" }}>
-            <SectionHeading light>Projects</SectionHeading>
-            <div className="projects-orbit-stage">
+        <section id="experience" className="paper-experiences">
+            <SectionHeading marginBottom={10}>experiences</SectionHeading>
+            <p className="paper-section-note">A few places I’ve learned, contributed, and grown.</p>
+            <div className="experience-orbit-stage">
                 <OrbitCardStack
-                    items={PROJECT_CARDS}
-                    defaultActiveIndex={DEFAULT_PROJECT_INDEX}
-                    spread={150}
-                    lift={40}
-                    className="projects-orbit"
-                    cardClassName="projects-orbit-card"
-                    onActiveChange={(_, index) => setActive(index)}
+                    items={EXPERIENCE_CARDS}
+                    defaultActiveIndex={0}
+                    spread={140}
+                    lift={34}
+                    showPortrait={false}
+                    label="Experience card stack"
+                    className="experience-orbit"
+                    cardClassName="experience-orbit-card"
                 />
             </div>
-            <article className="projects-orbit-details" aria-labelledby="active-project-title">
-                <p>{project.badge} · {project.year}</p>
-                <h3 id="active-project-title">{project.title}</h3>
-                <p>{project.desc}</p>
-                {project.tags && <ul aria-label="Software skills">
-                    {project.tags.map((tag) => <li key={tag}>{tag}</li>)}
-                </ul>}
-                {project.projectUrl && (
-                    <a href={project.projectUrl} target="_blank" rel="noreferrer">Visit {project.title} ↗</a>
-                )}
-            </article>
         </section>
     );
 }
@@ -678,7 +622,7 @@ function ContactSection() {
             </div>
 
             <div style={{ position: "relative", zIndex: 2 }}>
-                <SectionHeading>Contact Information</SectionHeading>
+                <SectionHeading>contact information</SectionHeading>
             </div>
 
             <div className="contact-terminal-shell">
@@ -756,7 +700,7 @@ export default function App() {
         body { background: #efe8ca; }
         button { outline: none; }
         .about-corkboard-section {
-          background: #303d47;
+          background: #333333;
           padding: 72px clamp(16px, 4vw, 52px) 86px;
           position: relative;
           overflow: hidden;
@@ -1697,7 +1641,7 @@ export default function App() {
           border: 3px solid #4b442d;
           border-radius: 4px;
           overflow: hidden;
-          background: #141b20;
+          background: #1c1c1c;
           box-shadow:
             inset 0 0 0 1px rgba(230,234,237,0.06),
             4px 4px 0 rgba(0,0,0,0.18);
@@ -1710,7 +1654,7 @@ export default function App() {
           padding: 0 14px;
           background:
             linear-gradient(180deg, rgba(255,255,255,0.08), rgba(0,0,0,0.06)),
-            #303d47;
+            #333333;
           border-bottom: 3px solid #4b442d;
         }
         .contact-terminal-dot {
@@ -1742,7 +1686,7 @@ export default function App() {
             repeating-linear-gradient(to bottom, rgba(230,234,237,0.035) 0 1px, transparent 1px 28px),
             radial-gradient(circle at 18% 20%, rgba(89,109,133,0.2), transparent 30%),
             linear-gradient(120deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12)),
-            #141b20;
+            #1c1c1c;
           color: #efe8ca;
         }
         .contact-terminal-block {
@@ -2116,7 +2060,7 @@ export default function App() {
           bottom: 34px;
           left: 15px;
           width: 12px;
-          background-image: radial-gradient(circle, #34434c 0 4px, transparent 4.6px);
+          background-image: radial-gradient(circle, #404040 0 4px, transparent 4.6px);
           background-size: 12px 34px;
           background-repeat: repeat-y;
           z-index: 0;
@@ -2679,7 +2623,6 @@ export default function App() {
         }
       `}</style>
             <div style={{ maxWidth: "100vw", overflowX: "hidden" }}>
-                <NavBar />
                 <HeroSection />
                 <AboutSection />
                 <ExperienceSection />

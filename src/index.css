@@ -1,3 +1,7 @@
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css";
+@source "./components";
+
 :root {
   font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
   font-synthesis: none;
@@ -34,4 +38,38 @@ body {
   .hero-greeting {
     flex-wrap: wrap;
   }
+}
+
+/* Orbit styles stay scoped so the original portfolio layout is preserved. */
+.projects-orbit-stage {
+  min-height: 650px;
+  display: flex;
+  align-items: center;
+}
+.projects-orbit-card {
+  box-sizing: border-box;
+  border-style: solid;
+  font-family: 'Inter', sans-serif;
+}
+.projects-orbit-card img {
+  display: block;
+  object-fit: contain;
+}
+.projects-orbit-details {
+  max-width: 820px;
+  margin: 16px auto 0;
+  padding: 28px;
+  background: #e6eaed;
+  color: #362f22;
+  border-radius: 12px;
+  font-family: 'Nunito', sans-serif;
+  line-height: 1.7;
+}
+.projects-orbit-details h3 { font-size: 28px; margin: 8px 0 12px; }
+.projects-orbit-details ul { display: flex; flex-wrap: wrap; gap: 8px 24px; padding-left: 20px; margin: 16px 0; }
+.projects-orbit-details a { color: #3e6897; text-decoration: underline; font-weight: 700; }
+@media (max-width: 700px) {
+  .projects-orbit { --orbit-spread-scale: 0.32; }
+  .projects-orbit-stage { min-height: 700px; }
+  .projects-orbit-details { padding: 20px; }
 }

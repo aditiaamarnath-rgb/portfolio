@@ -1,3 +1,4 @@
+import { OrbitCardStack } from "./components/ui/orbit-card-stack";
 import { useState, useEffect, useRef } from "react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Mascot } from "page-mascot";
@@ -576,17 +577,45 @@ function ExperienceSection() {
     );
 }
 
+const PROJECT_CARDS = PROJECTS.map((project) => ({
+    name: project.title,
+    role: project.badge,
+    description: project.desc.split(". ")[0] + ".",
+    accent: project.color,
+    initials: project.tab.slice(0, 2).toUpperCase(),
+    stat: project.tags?.join(" · ") ?? project.year,
+    image: project.image,
+}));
+
 function ProjectsSection() {
+    const [active, setActive] = useState(DEFAULT_PROJECT_INDEX);
+    const project = PROJECTS[active];
+
     return (
         <section id="projects" style={{ background: C.cream, padding: "72px clamp(18px, 4vw, 52px) 96px" }}>
-            <SectionHeading>Projects</SectionHeading>
-            {PROJECTS.map((project) => (
-                <article key={project.tab}>
-                    <h3>{project.title}</h3>
-                    <p>{project.desc}</p>
-                    {project.projectUrl && <a href={project.projectUrl} target="_blank" rel="noreferrer">Visit project</a>}
-                </article>
-            ))}
+            <SectionHeading light>Projects</SectionHeading>
+            <div className="projects-orbit-stage">
+                <OrbitCardStack
+                    items={PROJECT_CARDS}
+                    defaultActiveIndex={DEFAULT_PROJECT_INDEX}
+                    spread={150}
+                    lift={40}
+                    className="projects-orbit"
+                    cardClassName="projects-orbit-card"
+                    onActiveChange={(_, index) => setActive(index)}
+                />
+            </div>
+            <article className="projects-orbit-details" aria-labelledby="active-project-title">
+                <p>{project.badge} · {project.year}</p>
+                <h3 id="active-project-title">{project.title}</h3>
+                <p>{project.desc}</p>
+                {project.tags && <ul aria-label="Software skills">
+                    {project.tags.map((tag) => <li key={tag}>{tag}</li>)}
+                </ul>}
+                {project.projectUrl && (
+                    <a href={project.projectUrl} target="_blank" rel="noreferrer">Visit {project.title} ↗</a>
+                )}
+            </article>
         </section>
     );
 }

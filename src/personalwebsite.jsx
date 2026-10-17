@@ -3,7 +3,6 @@ import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Mascot } from "page-mascot";
 import arrayRegularFont from "../fonts/Array-Regular.otf";
 import aboutCorkboard from "./assets/about-corkboard.png";
-import experienceConsole from "./assets/experience-console.png";
 import bikeSticker from "./assets/bike-sticker.png";
 import cameraSticker from "./assets/camera-sticker.png";
 import paintSticker from "./assets/paint-sticker.png";
@@ -17,11 +16,6 @@ import projectFolderGreen from "./assets/project-folder-green.png";
 import projectFolderPink from "./assets/project-folder-pink.png";
 import projectFolderBeige from "./assets/project-folder-beige.png";
 import projectFolderBlue from "./assets/project-folder-blue.png";
-import experienceFolderGreen from "./assets/flat-folder-green.svg";
-import experienceFolderIndigo from "./assets/flat-folder-indigo.svg";
-import experienceFolderBlue from "./assets/flat-folder-blue.svg";
-import experienceFolderPurple from "./assets/flat-folder-purple.svg";
-import experienceFolderYellow from "./assets/flat-folder-yellow.svg";
 import vinylStarStickers from "./assets/vinyl-star-stickers-cutout.png";
 import vinylTrebleSticker from "./assets/vinyl-treble-sticker-cutout.png";
 import vinylButterflySticker from "./assets/vinyl-butterfly-sticker-cutout.png";
@@ -90,72 +84,6 @@ function SectionHeading({ children, light = false, fontFamily = "'Playfair Displ
                 margin: 0,
             }}>
                 {children}
-            </h2>
-        </div>
-    );
-}
-
-function LightWaveHeading({ text, light = false, fontFamily = "'Playfair Display', serif", fontSize = "clamp(32px,5vw,52px)" }) {
-    const letters = Array.from(text);
-    const [litIndex, setLitIndex] = useState(-1);
-    const waveTimers = useRef([]);
-
-    const clearWave = () => {
-        waveTimers.current.forEach((timer) => clearTimeout(timer));
-        waveTimers.current = [];
-    };
-
-    const runWave = () => {
-        clearWave();
-
-        if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
-            return;
-        }
-
-        letters.forEach((letter, index) => {
-            if (letter === " ") return;
-            waveTimers.current.push(setTimeout(() => setLitIndex(index), index * 58));
-        });
-        waveTimers.current.push(setTimeout(() => setLitIndex(-1), letters.length * 58 + 90));
-    };
-
-    useEffect(() => {
-        return () => {
-            waveTimers.current.forEach((timer) => clearTimeout(timer));
-            waveTimers.current = [];
-        };
-    }, []);
-
-    return (
-        <div className="experience-title-shell">
-            <h2
-                className="experience-title-wave"
-                aria-label={text}
-                tabIndex={0}
-                onPointerEnter={runWave}
-                onFocus={runWave}
-                onClick={runWave}
-                style={{
-                    "--experience-title-base": light ? C.lightText : C.ink,
-                    "--experience-title-lit": C.yellow,
-                    "--experience-title-glow": "rgba(249, 209, 217, 0.92)",
-                    fontFamily,
-                    fontSize,
-                    fontWeight: 900,
-                    lineHeight: 1,
-                    letterSpacing: 0,
-                    margin: 0,
-                }}
-            >
-                {letters.map((letter, index) => (
-                    <span
-                        key={`${letter}-${index}`}
-                        className={`experience-title-letter ${litIndex === index ? "is-lit" : ""}`}
-                        aria-hidden="true"
-                    >
-                        {letter === " " ? "\u00A0" : letter}
-                    </span>
-                ))}
             </h2>
         </div>
     );
@@ -497,134 +425,6 @@ function AboutSection() {
     );
 }
 
-function ExperienceSection() {
-    const items = [
-        { folder: "HGS", year: "Summer 2026", title: "Cloud Analytics Intern", sub: "At Hinduja Group Services, I helped write the technical spec for Databridge, a financial data platform built natively on Microsoft Fabric. That meant working through the OneLake medallion architecture, the Direct Lake semantic layer, capacity tiering, and security, all tracked in a 17-item decision register. I also built a Power BI semantic model by flattening a parent-child employee hierarchy into a dimension table with a 7-relationship star schema, then added an EDA agent on top as an AI proof-of-concept.", color: "#c4ca91", tabColor: "#9ea76b", icon: experienceFolderGreen },
-        { folder: "Undergrad Research", year: "Fall 2026", title: "Research Assistant", sub: "As an Undergraduate Research Assistant in Prof. Andi Wang's lab in the Industrial Engineering department, I'm studying Gaussian processes, optimization, and probabilistic network models and how they apply to real engineering problems. Day to day, that means reading and summarizing research papers, implementing methods in Python and R to run experiments, and presenting my progress to Prof. Wang every week. I'm also part of the Undergraduate Research Scholars program, a year-long mentored research experience with weekly seminars.", color: "#efe8ca", tabColor: "#cfc38d", icon: experienceFolderIndigo },
-        { folder: "VP", year: "Fall 2022 - 2025", title: "Teaching Assistant", sub: "At Youth and Government in Naperville, I served as school-wide Vice President and state-wide Assistant Director of Lobbyists over four years. I drove the passage of bills on recidivism and gambling advertisements, both approved unanimously at the state level. I was also recognized as Most Effective Lobbyist at the 2023 statewide conference.", color: "#d7dbaa", tabColor: "#9ea76b", icon: experienceFolderBlue },
-        { folder: "Volunteer", year: "2024 - 2025", title: "Main Desk & Central Supply Volunteer", sub: "At Rush Copley Medical Center, I volunteered at the main desk and in central supply for about a year, logging 96 hours. At the desk, I helped 50+ patients and visitors per shift with directions and questions in a fast-paced hospital environment. I also handled the weekly stocking and delivery of medical supplies across multiple departments.", color: "#f9d1d9", tabColor: "#e7aeba", icon: experienceFolderPurple },
-        { folder: "Instructor", year: "2024 - Now", title: "Music & Dance Suite", sub: "At The Music and Dance Suite, I taught private piano lessons for two years, building customized lesson plans for 20+ students. I adapted my techniques for neurodiverse and nonverbal learners so every student could make progress in a way that worked for them. I also organized and led performance recitals, which boosted student involvement and kept students coming back.", color: "#f6efcf", tabColor: "#d8cf99", icon: experienceFolderYellow },
-    ];
-    const [active, setActive] = useState(null);
-    const [experienceSlide, setExperienceSlide] = useState(0);
-    const current = active === null ? null : items[active];
-
-    return (
-        <section id="experience" style={{ background: C.bgDeep, padding: "90px clamp(14px, 5vw, 52px)", position: "relative", overflow: "hidden" }}>
-
-            <div className="experience-heading-layout">
-                <div className="experience-heading-copy">
-                    <LightWaveHeading text="Experiences" light fontFamily="'Array', 'Playfair Display', serif" fontSize="clamp(48px,8vw,88px)" />
-                </div>
-
-                <div
-                    className="experience-computer"
-                    style={{ backgroundImage: `url(${experienceConsole})` }}
-                >
-                    <div className="experience-computer-screen">
-                        <div className="experience-screen-folders" role="list" aria-label="Experience folders">
-                            {items.map((item, index) => (
-                                <button
-                                    key={item.folder}
-                                    type="button"
-                                    className={`experience-screen-folder ${active === index ? "is-active" : ""}`}
-                                    onClick={() => {
-                                        setActive(index);
-                                        setExperienceSlide(0);
-                                    }}
-                                    aria-pressed={active === index}
-                                    style={{
-                                        "--folder-color": item.color,
-                                        "--folder-tab-color": item.tabColor,
-                                    }}
-                                >
-                                    <img className="experience-screen-folder-icon" src={item.icon} alt="" draggable="false" />
-                                    <span className="experience-screen-folder-label">{item.folder}</span>
-                                </button>
-                            ))}
-                        </div>
-
-                        {current && (
-                            <article
-                                className="experience-file-window"
-                                key={current.folder}
-                                style={{ "--window-accent": current.tabColor }}
-                            >
-                                <button
-                                    type="button"
-                                    className="experience-file-close"
-                                    aria-label="Close experience"
-                                    onClick={() => {
-                                        setActive(null);
-                                        setExperienceSlide(0);
-                                    }}
-                                >
-                                    ×
-                                </button>
-                                {experienceSlide === 0 ? (
-                                    <button
-                                        type="button"
-                                        className="experience-file-next"
-                                        aria-label="Show experience photos"
-                                        onClick={() => setExperienceSlide(1)}
-                                    >
-                                        ›
-                                    </button>
-                                ) : (
-                                    <button
-                                        type="button"
-                                        className="experience-file-back"
-                                        aria-label="Show experience details"
-                                        onClick={() => setExperienceSlide(0)}
-                                    >
-                                        ‹
-                                    </button>
-                                )}
-                                <div className="experience-file-content">
-                                    {experienceSlide === 0 ? (
-                                        <>
-                                            <div className="experience-file-header">
-                                                <span className="experience-file-folder">{current.folder}</span>
-                                                <div className="experience-file-title-row">
-                                                    <h3>{current.title}</h3>
-                                                    <span className="experience-file-year">{current.year}</span>
-                                                </div>
-                                            </div>
-                                            <p>{current.sub}</p>
-                                        </>
-                                    ) : (
-                                        <div className="experience-photo-slide" aria-label={`${current.title} photos`}>
-                                            <div className="experience-photo-grid">
-                                                {(current.photos?.length ? current.photos : [null, null]).map((photo, photoIndex) => (
-                                                    photo ? (
-                                                        <img
-                                                            key={photo.src}
-                                                            className="experience-photo-frame"
-                                                            src={photo.src}
-                                                            alt={photo.alt}
-                                                            draggable="false"
-                                                        />
-                                                    ) : (
-                                                        <span
-                                                            key={`empty-photo-${photoIndex}`}
-                                                            className="experience-photo-placeholder"
-                                                            aria-hidden="true"
-                                                        />
-                                                    )
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </article>
-                        )}
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
-}
-
 /* ══════════════════ PROJECTS ══════════════════ */
 const PROJECTS = [
     { tab: "Bluprint", badge: "Personalized Interior Decorator", title: "Bluprint", desc: "A room design website that takes user's style preferences and generates furniture recommendations. Includes a customizable diagram of room, visual representation of items recommended, and dashboard to view all decorated rooms.", tags: ["React","Node.js", "Three.js","MongoDB"], year: "2024", emoji: "🐚", image: bluprintProjectPreview, noteCaption: "click here for link^", projectUrl: "https://bluprint-iroq.onrender.com/", color: C.fresh, ink: C.ink, descColor: C.ink },
@@ -634,7 +434,7 @@ const PROJECTS = [
 ];
 const DEFAULT_PROJECT_INDEX = 0;
 
-function ProjectsSection() {
+function ExperienceSection() {
     const [active, setActive] = useState(DEFAULT_PROJECT_INDEX);
     const p = PROJECTS[active];
     const projectTags = p.tags ?? [];
@@ -656,12 +456,12 @@ function ProjectsSection() {
     ) : null;
 
     return (
-        <section id="projects" style={{ background: C.cream, padding: "72px clamp(18px, 4vw, 52px) 96px", position: "relative", overflow: "hidden" }}>
+        <section id="experience" style={{ background: C.cream, padding: "72px clamp(18px, 4vw, 52px) 96px", position: "relative", overflow: "hidden" }}>
 
-            <SectionHeading>Projects</SectionHeading>
+            <SectionHeading>Experiences</SectionHeading>
 
             <div className="projects-shell">
-                <div className="project-folder-stack" role="tablist" aria-label="Projects">
+                <div className="project-folder-stack" role="tablist" aria-label="Experiences">
                     {folderLayers.map((layer) => (
                         <img
                             key={layer.name}
@@ -680,10 +480,10 @@ function ProjectsSection() {
                             <button
                                 key={proj.tab}
                                 type="button"
-                                id={`project-tab-${projectIndex}`}
+                                id={`experience-tab-${projectIndex}`}
                                 role="tab"
                                 aria-selected={active === projectIndex}
-                                aria-controls="project-panel"
+                                aria-controls="experience-panel"
                                 className={`project-folder-label ${className} ${active === projectIndex ? "is-active" : ""}`}
                                 onClick={() => setActive(projectIndex)}
                             >
@@ -694,9 +494,9 @@ function ProjectsSection() {
 
                     <article
                         key={active}
-                        id="project-panel"
+                        id="experience-panel"
                         role="tabpanel"
-                        aria-labelledby={`project-tab-${active}`}
+                        aria-labelledby={`experience-tab-${active}`}
                         className={`project-file-paper project-file-paper-${activeFolderLayer.name}`}
                         style={{
                             "--paper-accent": activeFolderLayer.paperAccent,
@@ -772,6 +572,21 @@ function ProjectsSection() {
                     </article>
                 </div>
             </div>
+        </section>
+    );
+}
+
+function ProjectsSection() {
+    return (
+        <section id="projects" style={{ background: C.cream, padding: "72px clamp(18px, 4vw, 52px) 96px" }}>
+            <SectionHeading>Projects</SectionHeading>
+            {PROJECTS.map((project) => (
+                <article key={project.tab}>
+                    <h3>{project.title}</h3>
+                    <p>{project.desc}</p>
+                    {project.projectUrl && <a href={project.projectUrl} target="_blank" rel="noreferrer">Visit project</a>}
+                </article>
+            ))}
         </section>
     );
 }

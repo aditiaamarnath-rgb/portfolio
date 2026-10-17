@@ -531,9 +531,9 @@ function ProjectsSection() {
 const EXPERIENCES = [
         { folder: "HGS", year: "Summer 2026", title: "Cloud Analytics Intern", sub: "At Hinduja Group Services, I helped write the technical spec for Databridge, a financial data platform built natively on Microsoft Fabric. That meant working through the OneLake medallion architecture, the Direct Lake semantic layer, capacity tiering, and security, all tracked in a 17-item decision register. I also built a Power BI semantic model by flattening a parent-child employee hierarchy into a dimension table with a 7-relationship star schema, then added an EDA agent on top as an AI proof-of-concept." },
         { folder: "Undergrad Research", year: "Fall 2026", title: "Research Assistant", sub: "As an Undergraduate Research Assistant in Prof. Andi Wang's lab in the Industrial Engineering department, I'm studying Gaussian processes, optimization, and probabilistic network models and how they apply to real engineering problems. Day to day, that means reading and summarizing research papers, implementing methods in Python and R to run experiments, and presenting my progress to Prof. Wang every week. I'm also part of the Undergraduate Research Scholars program, a year-long mentored research experience with weekly seminars." },
-        { folder: "VP", year: "Fall 2022 - 2025", title: "Teaching Assistant", sub: "At Youth and Government in Naperville, I served as school-wide Vice President and state-wide Assistant Director of Lobbyists over four years. I drove the passage of bills on recidivism and gambling advertisements, both approved unanimously at the state level. I was also recognized as Most Effective Lobbyist at the 2023 statewide conference." },
-        { folder: "Volunteer", year: "2024 - 2025", title: "Main Desk & Central Supply Volunteer", sub: "At Rush Copley Medical Center, I volunteered at the main desk and in central supply for about a year, logging 96 hours. At the desk, I helped 50+ patients and visitors per shift with directions and questions in a fast-paced hospital environment. I also handled the weekly stocking and delivery of medical supplies across multiple departments." },
         { folder: "Instructor", year: "2024 - Now", title: "Music & Dance Suite", sub: "At The Music and Dance Suite, I taught private piano lessons for two years, building customized lesson plans for 20+ students. I adapted my techniques for neurodiverse and nonverbal learners so every student could make progress in a way that worked for them. I also organized and led performance recitals, which boosted student involvement and kept students coming back." },
+        { folder: "Volunteer", year: "2024 - 2025", title: "Main Desk & Central Supply Volunteer", sub: "At Rush Copley Medical Center, I volunteered at the main desk and in central supply for about a year, logging 96 hours. At the desk, I helped 50+ patients and visitors per shift with directions and questions in a fast-paced hospital environment. I also handled the weekly stocking and delivery of medical supplies across multiple departments." },
+        { folder: "VP", year: "Fall 2022 - 2025", title: "Teaching Assistant", sub: "At Youth and Government in Naperville, I served as school-wide Vice President and state-wide Assistant Director of Lobbyists over four years. I drove the passage of bills on recidivism and gambling advertisements, both approved unanimously at the state level. I was also recognized as Most Effective Lobbyist at the 2023 statewide conference." },
     ];
 
 const EXPERIENCE_CARDS = EXPERIENCES.map((experience) => ({
@@ -567,6 +567,11 @@ function ExperienceSection() {
 /* ══════════════════ CONTACT ══════════════════ */
 function ContactSection() {
     const [message, setMessage] = useState("");
+    const [replyEmail, setReplyEmail] = useState("");
+    const [website, setWebsite] = useState("");
+    const [sendState, setSendState] = useState("idle");
+    const [sendStatus, setSendStatus] = useState("");
+    const sendingRef = useRef(false);
     const messageInputRef = useRef(null);
     const terminalContacts = [
         {
@@ -576,8 +581,8 @@ function ContactSection() {
         },
         {
             command: "contact.linkedin",
-            value: "linkedin.com/in/aditi",
-            href: "https://www.linkedin.com/in/aditi",
+            value: "linkedin.com/in/aditi-amarnath/",
+            href: "https://www.linkedin.com/in/aditi-amarnath/",
         },
         {
             command: "contact.github",
@@ -587,17 +592,43 @@ function ContactSection() {
     ];
     const trimmedMessage = message.trim();
 
-    const sendMessage = (event) => {
+    const sendMessage = async (event) => {
         event.preventDefault();
-        if (!trimmedMessage) return;
-
-        const subject = encodeURIComponent("Message from your portfolio");
-        const body = encodeURIComponent(trimmedMessage);
-        window.location.href = `mailto:aditi.amarnath@gmail.com?subject=${subject}&body=${body}`;
+        if (!trimmedMessage || sendingRef.current) return;
+        const endpoint = import.meta.env.VITE_CONTACT_ENDPOINT;
+        if (!endpoint) {
+            setSendState("error");
+            setSendStatus("Message sending isn’t available yet. Please use the email link above.");
+            return;
+        }
+        sendingRef.current = true;
+        setSendState("sending");
+        setSendStatus("Sending your message…");
+        try {
+            const response = await fetch(endpoint, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: trimmedMessage, email: replyEmail.trim(), website }),
+                signal: AbortSignal.timeout(15000),
+            });
+            const result = await response.json();
+            if (!response.ok || result.ok !== true) throw new Error(result.error || "Could not send your message. Please try again.");
+            setSendState("sent");
+            setSendStatus("Message sent. Thanks for reaching out!");
+            setMessage("");
+            setReplyEmail("");
+        } catch (error) {
+            setSendState("error");
+            setSendStatus(error.name === "TimeoutError" || error instanceof TypeError
+                ? "Could not confirm delivery. Please try again later or use the email link above."
+                : error.message);
+        } finally {
+            sendingRef.current = false;
+        }
     };
 
     const focusMessagePrompt = (event) => {
-        if (event.target.closest("a, input")) return;
+        if (event.target.closest("a, input, button, label")) return;
         messageInputRef.current?.focus();
     };
 
@@ -657,21 +688,21 @@ function ContactSection() {
                                 download resume
                             </a>
                         </div>
-                        <form className="contact-terminal-message-line" onSubmit={sendMessage}>
-                            <label className="contact-terminal-prompt-symbol" htmlFor="contact-message">
-                                &gt;
-                            </label>
-                            <input
-                                ref={messageInputRef}
-                                id="contact-message"
-                                className="contact-terminal-input"
-                                type="text"
-                                value={message}
-                                onChange={(event) => setMessage(event.target.value)}
-                                placeholder="type a message and press enter"
-                                autoComplete="off"
-                                aria-label="Type a message and press Enter to email Aditi"
-                            />
+                        <form className="contact-terminal-form" onSubmit={sendMessage}>
+                            <div className="contact-terminal-message-line">
+                                <label className="contact-terminal-prompt-symbol" htmlFor="contact-reply-email">&gt; reply email:</label>
+                                <input id="contact-reply-email" className="contact-terminal-input" type="email" value={replyEmail} onChange={(event) => setReplyEmail(event.target.value)} placeholder="optional" autoComplete="email" maxLength={254} disabled={sendState === "sending"} />
+                            </div>
+                            <div className="contact-terminal-honeypot" aria-hidden="true">
+                                <label htmlFor="contact-website">Website</label>
+                                <input id="contact-website" name="website" tabIndex={-1} autoComplete="off" value={website} onChange={(event) => setWebsite(event.target.value)} />
+                            </div>
+                            <div className="contact-terminal-message-line">
+                                <label className="contact-terminal-prompt-symbol" htmlFor="contact-message">&gt;</label>
+                                <input ref={messageInputRef} id="contact-message" className="contact-terminal-input" type="text" value={message} onChange={(event) => setMessage(event.target.value)} placeholder="type a message and press enter" autoComplete="off" aria-label="Message to Aditi" aria-describedby="contact-send-status" maxLength={4000} required disabled={sendState === "sending"} />
+                                <button className="contact-terminal-send" type="submit" disabled={!trimmedMessage || sendState === "sending"}>{sendState === "sending" ? "sending…" : "send ↵"}</button>
+                            </div>
+                            <p id="contact-send-status" className="contact-terminal-send-status" role="status" aria-live="polite" aria-atomic="true">{sendStatus}</p>
                         </form>
                         <span className="contact-terminal-cursor" aria-hidden="true" />
                     </div>

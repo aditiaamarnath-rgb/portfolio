@@ -2,6 +2,14 @@
 @import "tailwindcss/utilities.css";
 @source "./components";
 
+@font-face {
+  font-family: 'Sentient';
+  src: url('../fonts/sentient/Sentient-Regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 :root {
   font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
   font-synthesis: none;
@@ -66,9 +74,7 @@ body {
   isolation: isolate;
   min-height: max(720px, 100svh);
   background-color: #f4f0e7;
-  background-image: url('./assets/letter-hero-paper.png');
-  background-size: cover;
-  background-position: center bottom;
+  background-image: url('./assets/paper-grain.svg');
   color: #26241f;
 }
 .letter-nav {
@@ -124,7 +130,7 @@ body {
 }
 .letter-intro p {
   max-width: none;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Sentient', Georgia, serif;
   font-size: 14px;
   line-height: 1.65;
   margin: 0 0 10px;
@@ -147,9 +153,15 @@ body {
   shape-margin: 12px;
 }
 .letter-intro::after { content: ''; display: block; clear: both; }
-.letter-mascot { display: block; width: 230px; height: 230px; }
+.letter-mascot {
+  display: block;
+  width: 230px;
+  height: 230px;
+  transform: scale(1.2);
+  transform-origin: center;
+}
 @media (max-width: 700px) {
-  .letter-hero { min-height: 900px; background-size: auto 520px; background-position: 25% bottom; background-repeat: no-repeat; }
+  .letter-hero { min-height: 900px; }
   .letter-nav { gap: 10px; padding: 25px 15px 0; }
   .letter-nav a { min-width: 0; padding: 4px 12px; font-size: 12px; }
   .letter-intro { width: auto; max-width: 460px; margin: 0; padding: 65px 28px 360px; }
@@ -199,11 +211,11 @@ body {
   padding: 20px 0 40px;
 }
 #aboutme .about-board-postit { min-height: 400px; filter: drop-shadow(3px 7px 6px #66543a18); }
-#aboutme .about-paper-ref-teal { background-color: #928e5e; }
+#aboutme .about-paper-ref-teal { background-color: #928e5e; background-image: none; }
 #aboutme .about-paper-ref-pink,
 #aboutme .about-paper-ref-pink.about-ref-torn-pink::before { background-color: #ecc4c3; }
 #aboutme .about-paper-ref-grid { background-color: #ddd3c9; }
-#aboutme .about-board-postit::after { background: #b97d7b; border: 1px solid #575527; }
+#aboutme .about-board-postit::after { display: none; }
 #aboutme h3 { font-family: 'Cormorant Garamond', serif !important; font-weight: 500 !important; }
 #aboutme .hobbies-paper-copy { font: 16px/1.8 'Nunito', sans-serif; margin-top: 28px; }
 #aboutme .paper-hobby-link { display: inline-block; margin-top: 24px; color: #575527; font: 20px 'Caveat', cursive; text-underline-offset: 4px; }
@@ -235,28 +247,31 @@ body {
 .experience-letter > p:last-child { font: 14px/1.9 'Nunito', sans-serif; color: #514b40; }
 #projects { padding-top: 82px; }
 #contactme .contact-terminal-shell {
-  background: #e9dfcb;
-  border: 1px solid #a99a81;
+  background: #e7dfd1;
+  border: 1px solid #222222;
   border-radius: 8px;
-  box-shadow: 5px 8px 15px #574b3120;
+  box-shadow: 5px 8px 15px #00000030;
 }
-#contactme .contact-terminal { border: 1px solid #b5aa96; border-radius: 4px; background: #faf7ee; box-shadow: none; }
-#contactme .contact-terminal-header { background: #e3e5da; border-bottom: 1px solid #bbb5a3; }
-#contactme .contact-terminal-path { color: #5e6559; font-weight: 500; }
+#contactme .contact-terminal { border: 1px solid #222222; border-radius: 4px; background: #f4f0e7; box-shadow: none; }
+#contactme .contact-terminal-header { background: #ded4c3; border-bottom: 1px solid #222222; }
+#contactme .contact-terminal-path { color: #222222; font-weight: 500; }
 #contactme .contact-terminal-body {
-  color: #3c3c31;
-  background: repeating-linear-gradient(to bottom, transparent 0 27px, #a99a8110 27px 28px), #faf7ee;
+  color: #111111;
+  background: #f4f0e7;
 }
-#contactme .contact-terminal-command { color: #766d5e; font-weight: 500; }
+#contactme .contact-terminal-command { color: #333333; font-weight: 500; }
 #contactme .contact-terminal-command::first-letter,
-#contactme .contact-terminal-prompt-symbol { color: #9a7160; }
-#contactme .contact-terminal-output { color: #3b514c; text-decoration: underline; text-underline-offset: 4px; }
-#contactme .contact-terminal-output:hover { color: #906c5a; }
-#contactme .contact-terminal-input { color: #363d33; caret-color: #6e7c66; border-color: #a99a81; }
-#contactme .contact-terminal-input::placeholder { color: #8a8274; }
-#contactme .contact-terminal-input:focus { border-color: #6e7c66; box-shadow: 0 1px 0 #6e7c66; }
-#contactme .contact-terminal-cursor { background: #7d896f; box-shadow: none; }
-#contactme .contact-terminal-output:focus-visible { outline-color: #6e7c66; }
+#contactme .contact-terminal-prompt-symbol { color: #111111; }
+#contactme .contact-terminal-output { color: #111111; text-decoration: underline; text-underline-offset: 4px; }
+#contactme .contact-terminal-output:hover { color: #000000; }
+#contactme .contact-terminal-input { color: #111111; caret-color: #222222; border-color: #222222; }
+#contactme .contact-terminal-input::placeholder { color: #666666; }
+#contactme .contact-terminal-input:focus { border-color: #222222; box-shadow: 0 1px 0 #222222; }
+#contactme .contact-terminal-cursor { background: #111111; box-shadow: none; }
+#contactme .contact-terminal-output:focus-visible { outline-color: #222222; }
+#contactme .contact-terminal-dot { background: #222222; border-color: #222222; }
+#contactme .contact-terminal-dot:nth-child(2) { background: #666666; }
+#contactme .contact-terminal-dot:nth-child(3) { background: #111111; }
 @media (max-width: 760px) {
   #aboutme .about-corkboard-postits.about-stack-grid,
   .experience-correspondence { grid-template-columns: 1fr; }
@@ -323,3 +338,16 @@ body {
   .experience-orbit { --orbit-spread-scale: 0.1; padding-left: 0; padding-right: 0; }
   .experience-orbit-card { width: min(82vw, 32rem); height: 440px; }
 }
+
+.letter-nav a { font-family: 'Sentient', Georgia, serif; }
+
+
+
+#contactme .contact-terminal-form { margin-top: 12px; }
+#contactme .contact-terminal-form .contact-terminal-message-line { margin: 12px 0; }
+#contactme .contact-terminal-form label { font-size: 14px; white-space: nowrap; }
+#contactme .contact-terminal-honeypot { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+#contactme .contact-terminal-send { flex-shrink: 0; border: 1px solid #222; border-radius: 5px; padding: 4px 10px; background: transparent; color: #111; font: 14px 'Inter', monospace; cursor: pointer; }
+#contactme .contact-terminal-send:disabled { opacity: 0.5; cursor: default; }
+#contactme .contact-terminal-send:focus-visible { outline: 2px solid #222; outline-offset: 3px; }
+#contactme .contact-terminal-send-status { font: 13px/1.6 'Inter', monospace; color: #333; }

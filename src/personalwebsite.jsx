@@ -123,6 +123,10 @@ function HeroSection() {
 function HeroStickers() {
     const boardRef = useRef(null);
     const dragState = useRef(null);
+    const dragFrame = useRef(0);
+    const pendingPointer = useRef(null);
+
+    useEffect(() => () => cancelAnimationFrame(dragFrame.current), []);
     const hobbyStickers = [
         {
             id: "camera",
@@ -206,7 +210,7 @@ function HeroStickers() {
         setDraggingSticker(sticker.id);
     };
 
-    const moveSticker = (event) => {
+    const updateStickerPosition = (event) => {
         const drag = dragState.current;
         if (!drag) return;
 
@@ -233,7 +237,8 @@ function HeroStickers() {
         // Test the nearest edges of every protected text area, including corners.
         const xs = [x, minX, maxX, ...blocked.flatMap((area) => [area.left, area.right])];
         const ys = [y, minY, maxY, ...blocked.flatMap((area) => [area.top, area.bottom])];
-        const candidates = xs.flatMap((cx) => ys.map((cy) => ({ x: clamp(cx, minX, maxX), y: clamp(cy, minY, maxY) }))).filter(allowed);
+        // Most moves need no collision search at all.
+        const candidates = allowed({ x, y }) ? [{ x, y }] : xs.flatMap((cx) => ys.map((cy) => ({ x: clamp(cx, minX, maxX), y: clamp(cy, minY, maxY) }))).filter(allowed);
         const position = candidates.reduce((best, point) => !best || Math.hypot(point.x - x, point.y - y) < Math.hypot(best.x - x, best.y - y) ? point : best, null);
         if (!position) return;
         setStickerPositions((positions) => ({
@@ -242,7 +247,24 @@ function HeroStickers() {
         }));
     };
 
+    const moveSticker = (event) => {
+        if (!dragState.current) return;
+        pendingPointer.current = { clientX: event.clientX, clientY: event.clientY };
+        if (dragFrame.current) return;
+        dragFrame.current = requestAnimationFrame(() => {
+            dragFrame.current = 0;
+            updateStickerPosition(pendingPointer.current);
+            pendingPointer.current = null;
+        });
+    };
+
     const endStickerDrag = (event) => {
+        cancelAnimationFrame(dragFrame.current);
+        dragFrame.current = 0;
+        if (pendingPointer.current) {
+            updateStickerPosition(pendingPointer.current);
+            pendingPointer.current = null;
+        }
         if (event.currentTarget.hasPointerCapture(event.pointerId)) {
             event.currentTarget.releasePointerCapture(event.pointerId);
         }
@@ -566,6 +588,29 @@ function ExperienceSection() {
 
 /* ══════════════════ CONTACT ══════════════════ */
 function ContactSection() {
+    const sectionRef = useRef(null);
+
+    useEffect(() => {
+        const section = sectionRef.current;
+        if (!section || !("IntersectionObserver" in window)) return;
+        let nearViewport = false;
+        const updateAnimation = () => {
+            section.style.setProperty("--contact-animation-state",
+                nearViewport && !document.hidden ? "running" : "paused");
+        };
+        const observer = new IntersectionObserver(([entry]) => {
+            nearViewport = entry.isIntersecting;
+            updateAnimation();
+        }, { rootMargin: "200px" });
+        observer.observe(section);
+        document.addEventListener("visibilitychange", updateAnimation);
+        updateAnimation();
+        return () => {
+            observer.disconnect();
+            document.removeEventListener("visibilitychange", updateAnimation);
+            section.style.removeProperty("--contact-animation-state");
+        };
+    }, []);
     const [message, setMessage] = useState("");
     const [replyEmail, setReplyEmail] = useState("");
     const [website, setWebsite] = useState("");
@@ -633,19 +678,19 @@ function ContactSection() {
     };
 
     return (
-        <section id="contactme" style={{ background: C.bgMid, padding: "90px 52px 110px", position: "relative", overflow: "hidden", isolation: "isolate" }}>
+        <section id="contactme" ref={sectionRef} style={{ background: C.bgMid, padding: "90px 52px 110px", position: "relative", overflow: "hidden", isolation: "isolate" }}>
 
             <div className="contact-vinyl-stage" aria-hidden="true">
                 <div className="contact-vinyl">
-                    <img src={vinylStarStickers} alt="" className="contact-vinyl-sticker contact-vinyl-sticker-stars" />
-                    <img src={vinylTrebleSticker} alt="" className="contact-vinyl-sticker contact-vinyl-sticker-treble" />
-                    <img src={vinylButterflySticker} alt="" className="contact-vinyl-sticker contact-vinyl-sticker-butterfly" />
-                    <img src={vinylStrawberrySticker} alt="" className="contact-vinyl-sticker contact-vinyl-sticker-strawberry" />
-                    <img src={vinylSpiderSticker} alt="" className="contact-vinyl-sticker contact-vinyl-sticker-spider" />
-                    <img src={vinylAppleSticker} alt="" className="contact-vinyl-sticker contact-vinyl-sticker-apple" />
-                    <img src={vinylSproutSticker} alt="" className="contact-vinyl-sticker contact-vinyl-sticker-sprout" />
-                    <img src={vinylJellyfishSticker} alt="" className="contact-vinyl-sticker contact-vinyl-sticker-jellyfish" />
-                    <img src={vinylRabbitStampSticker} alt="" className="contact-vinyl-sticker contact-vinyl-sticker-rabbit-stamp" />
+                    <img src={vinylStarStickers} alt="" loading="lazy" decoding="async" className="contact-vinyl-sticker contact-vinyl-sticker-stars" />
+                    <img src={vinylTrebleSticker} alt="" loading="lazy" decoding="async" className="contact-vinyl-sticker contact-vinyl-sticker-treble" />
+                    <img src={vinylButterflySticker} alt="" loading="lazy" decoding="async" className="contact-vinyl-sticker contact-vinyl-sticker-butterfly" />
+                    <img src={vinylStrawberrySticker} alt="" loading="lazy" decoding="async" className="contact-vinyl-sticker contact-vinyl-sticker-strawberry" />
+                    <img src={vinylSpiderSticker} alt="" loading="lazy" decoding="async" className="contact-vinyl-sticker contact-vinyl-sticker-spider" />
+                    <img src={vinylAppleSticker} alt="" loading="lazy" decoding="async" className="contact-vinyl-sticker contact-vinyl-sticker-apple" />
+                    <img src={vinylSproutSticker} alt="" loading="lazy" decoding="async" className="contact-vinyl-sticker contact-vinyl-sticker-sprout" />
+                    <img src={vinylJellyfishSticker} alt="" loading="lazy" decoding="async" className="contact-vinyl-sticker contact-vinyl-sticker-jellyfish" />
+                    <img src={vinylRabbitStampSticker} alt="" loading="lazy" decoding="async" className="contact-vinyl-sticker contact-vinyl-sticker-rabbit-stamp" />
                     <div className="contact-vinyl-label">
                         <span>Limited Edition</span>
                     </div>
@@ -1808,6 +1853,7 @@ export default function App() {
           background: #f9d1d9;
           box-shadow: 0 0 12px rgba(249,209,217,0.38);
           animation: contact-terminal-cursor 1.1s steps(2, start) infinite;
+          animation-play-state: var(--contact-animation-state, running);
         }
         .contact-vinyl-stage {
           position: absolute;
@@ -1834,6 +1880,9 @@ export default function App() {
             inset 0 0 42px rgba(255,255,255,0.08),
             18px 24px 0 rgba(0,0,0,0.18);
           animation: contact-vinyl-spin 42s linear infinite;
+          animation-play-state: var(--contact-animation-state, running);
+          /* Cache the filtered stickers with the record while it rotates. */
+          will-change: transform;
           overflow: hidden;
         }
         .contact-vinyl::before {

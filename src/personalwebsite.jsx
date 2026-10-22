@@ -2,6 +2,8 @@ import { OrbitCardStack } from "./components/ui/orbit-card-stack";
 import { useState, useEffect, useRef } from "react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Mascot } from "page-mascot";
+import FoldText from "./components/FoldText";
+import PaperCrumple from "./components/PaperCrumple";
 import arrayRegularFont from "../fonts/Array-Regular.otf";
 import bikeSticker from "./assets/bike-sticker.png";
 import cameraSticker from "./assets/camera-sticker.png";
@@ -25,6 +27,9 @@ import vinylAppleSticker from "./assets/vinyl-apple-sticker-cutout.png";
 import vinylSproutSticker from "./assets/vinyl-sprout-sticker-cutout.png";
 import vinylJellyfishSticker from "./assets/vinyl-jellyfish-sticker-cutout.png";
 import vinylRabbitStampSticker from "./assets/vinyl-rabbit-stamp-sticker-cutout.png";
+import aboutEducationNote from "./assets/about-original-0.png";
+import aboutHobbiesNote from "./assets/about-original-1.png";
+import aboutActivitiesNote from "./assets/about-original-2.png";
 
 function InjectFonts() {
     useEffect(() => {
@@ -58,11 +63,6 @@ const C = {
     yellow:    "#ede39c",
     yellowDark:"#e4ce5e",
     softpink:  "#caaeb5",
-};
-
-const ABOUT = {
-    scrapInk: "#2B2420",
-    twine: "#8A6D4B",
 };
 
 /* ── Section heading with diamond bullet ── */
@@ -99,7 +99,28 @@ function HeroSection() {
             <HeroStickers />
             <div className="letter-intro">
                 <div className="letter-greeting">
-                <h1 id="hero-title" className="page-heading">hello, I’m Aditi.</h1>
+                <h1 id="hero-title" className="page-heading">
+                    <FoldText
+                        text="hello, I’m Aditi."
+                        foldStyle="paper"
+                        splitBy="char"
+                        hinge="top"
+                        trigger="mount"
+                        foldAngle={92}
+                        duration={0.65}
+                        stagger={0.045}
+                        staggerFrom="start"
+                        ease="power3.out"
+                        hoverRefold={true}
+                        refoldRadius={140}
+                        refoldAngle={45}
+                        perspective={700}
+                        creaseShading={0.55}
+                        fontSize="inherit"
+                        fontWeight="inherit"
+                        className="hero-fold-text"
+                    />
+                </h1>
 
                 </div>
             <div className="letter-mascot-stamp">
@@ -111,7 +132,7 @@ function HeroSection() {
                     label="Aditi’s mascot — click to say hello"
                 />
             </div>
-                <p>I’m studying computer science and statistics at the University of Wisconsin–Madison. I love making things, finding patterns, and turning little ideas into something useful.</p>
+                <p>I'm currently an undergraduate student at the University of Wisconsin–Madison, majoring in Computer Science and Statistics. I'm passionate about exploring the intersection of technology and data, with particular interests in machine learning, artificial intelligence, and software development.</p>
                 <p>A collection of my projects, experiences, and a little bit of me. A lot more text blah blah blah blah blaaaaaaaaaaahhhhhh. blsssffffah blah blah blahfjk ldsjlsljks blaaaaaaaaaaahhhhhh.</p>
 
                 <a className="letter-contact" href="#contactme">let’s connect</a>
@@ -310,19 +331,45 @@ function HeroStickers() {
 
 /* ══════════════════ ABOUT ME ══════════════════ */
 function AboutStack({ children, tilt, yOffset = 0, zIndex = 1 }) {
+    const note = tilt === -2
+        ? { src: aboutEducationNote, title: "Education" }
+        : tilt === 3
+            ? { src: aboutHobbiesNote, title: "Hobbies" }
+            : { src: aboutActivitiesNote, title: "Activities" };
     return (
         <div className="about-stack-shell" style={{ transform: `translateY(${yOffset}px)`, zIndex }}>
-            <div className="about-stack-angle" style={{ "--about-rotate": `${tilt}deg` }}>
-                {children}
-            </div>
+            <PaperCrumple
+                src={note.src}
+                alt={`${note.title} post-it note`}
+                width={note.title === "Education" ? 420 : 400}
+                height={520}
+                sceneHeight={640}
+                imageFit={note.title === "Education" ? "fill" : "contain"}
+                releaseBehavior="restore"
+                crumpleAmount={0.95}
+                crumpleDuration={0.85}
+                releaseDuration={0.7}
+                foldCount={6}
+                foldSharpness={0.45}
+                wrinkleDepth={0.85}
+                detail={80}
+                creaseStrength={0.18}
+                paperColor="#f4f0e8"
+                paperTexture={0.08}
+                draggable
+                returnToOrigin
+            />
+            <div className="about-note-text">{children}</div>
         </div>
     );
 }
 
+const ABOUT = { scrapInk: "#2B2420", twine: "#8A6D4B" };
+
 function AboutSection() {
     return (
         <section id="aboutme" className="about-corkboard-section" aria-label="About Me">
-            <SectionHeading>about me</SectionHeading>
+            <SectionHeading marginBottom={16}>about me</SectionHeading>
             <div className="about-corkboard-frame">
                 <div className="about-corkboard-postits about-stack-grid">
                     <AboutStack tilt={-2} yOffset={16} zIndex={30}>
@@ -358,7 +405,6 @@ function AboutSection() {
                                 <span style={{ fontFamily: "'Caveat', cursive", fontSize: 19, fontWeight: 700, color: ABOUT.scrapInk, opacity: 0.62, textTransform: "uppercase", marginBottom: 8, display: "block" }}>Vibe</span>
                                 <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 32, fontWeight: 900, color: ABOUT.scrapInk, margin: 0 }}>Hobbies</h3>
                                 <p className="hobbies-paper-copy">Photography, synth pop &amp; RnB, watercolor painting, scenic bike rides, and making press-on nails.</p>
-                                <a className="paper-hobby-link" href="#home">Find my hobby stickers ↑</a>
                             </div>
                         </article>
                     </AboutStack>
@@ -394,6 +440,50 @@ function AboutSection() {
                     </AboutStack>
                 </div>
 
+            </div>
+        </section>
+    );
+}
+
+/* ══════════════════ MOVING FILM STRIP ══════════════════ */
+// Add your photos here later: import each image above, then replace `src: null`.
+const FILM_PHOTOS = [
+    { src: null, alt: "Aditi photo 1", mark: "✿" },
+    { src: null, alt: "Aditi photo 2", mark: "♡" },
+    { src: null, alt: "Aditi photo 3", mark: "✦" },
+    { src: null, alt: "Aditi photo 4", mark: "☻" },
+    { src: null, alt: "Aditi photo 5", mark: "❀" },
+    { src: null, alt: "Aditi photo 6", mark: "☆" },
+];
+
+function FilmFrames({ hidden = false }) {
+    return (
+        <div className="film-strip-set" aria-hidden={hidden || undefined}>
+            {FILM_PHOTOS.map((photo, index) => (
+                <figure className="film-frame" key={`${hidden ? "copy" : "original"}-${index}`}>
+                    <span className="film-frame-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                    {photo.src ? (
+                        <img src={photo.src} alt={hidden ? "" : photo.alt} />
+                    ) : (
+                        <div className="film-photo-placeholder" role={hidden ? undefined : "img"} aria-label={hidden ? undefined : `${photo.alt} placeholder`}>
+                            <span aria-hidden="true">{photo.mark}</span>
+                            <small>your photo here</small>
+                        </div>
+                    )}
+                </figure>
+            ))}
+        </div>
+    );
+}
+
+function FilmStripSection() {
+    return (
+        <section className="film-memories" aria-label="A moving film strip of photos from Aditi's life">
+            <div className="film-strip-window">
+                <div className="film-strip-track">
+                    <FilmFrames />
+                    <FilmFrames hidden />
+                </div>
             </div>
         </section>
     );
@@ -2705,6 +2795,7 @@ export default function App() {
             <div style={{ maxWidth: "100vw", overflowX: "hidden" }}>
                 <HeroSection />
                 <AboutSection />
+                <FilmStripSection />
                 <ExperienceSection />
                 <ProjectsSection />
                 <ContactSection />

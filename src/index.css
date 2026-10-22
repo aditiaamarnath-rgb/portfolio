@@ -196,7 +196,7 @@ body {
 #experience { padding: 82px clamp(24px, 6vw, 96px) 100px; }
 #aboutme .about-corkboard-frame {
   min-height: 0;
-  max-width: 1220px;
+  max-width: 1400px;
   overflow: visible;
   background: transparent;
   border: 0;
@@ -206,10 +206,12 @@ body {
 #aboutme .about-corkboard-postits.about-stack-grid {
   position: relative;
   inset: auto;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(24px, 4vw, 52px);
-  padding: 20px 0 40px;
+  grid-template-columns: minmax(0, 1.05fr) repeat(2, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 28px);
+  padding: 0 0 40px;
 }
+#aboutme .about-corkboard-postits .about-stack-shell { padding-top: 0; }
+#aboutme .about-corkboard-frame { margin-top: -40px; }
 #aboutme .about-board-postit { min-height: 400px; filter: drop-shadow(3px 7px 6px #66543a18); }
 #aboutme .about-paper-ref-teal { background-color: #928e5e; background-image: none; }
 #aboutme .about-paper-ref-pink,
@@ -219,6 +221,172 @@ body {
 #aboutme h3 { font-family: 'Cormorant Garamond', serif !important; font-weight: 500 !important; }
 #aboutme .hobbies-paper-copy { font: 16px/1.8 'Nunito', sans-serif; margin-top: 28px; }
 #aboutme .paper-hobby-link { display: inline-block; margin-top: 24px; color: #575527; font: 20px 'Caveat', cursive; text-underline-offset: 4px; }
+#aboutme { padding-inline: clamp(24px, 4vw, 64px); padding-bottom: 30px; }
+.about-note-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+/* Source artwork for the paper textures: small hand-cut variations, not deep notches. */
+#aboutme .about-note-text .about-board-postit {
+  clip-path: polygon(
+    0.6% 0.5%, 12% 0.25%, 24% 0.5%, 38% 0.2%, 52% 0.45%,
+    67% 0.2%, 83% 0.5%, 99.4% 0.35%, 99.7% 12%, 99.45% 28%,
+    99.75% 44%, 99.5% 61%, 99.75% 78%, 99.4% 99.5%, 85% 99.75%,
+    70% 99.45%, 54% 99.7%, 39% 99.5%, 23% 99.8%, 0.5% 99.5%,
+    0.25% 84%, 0.5% 68%, 0.2% 51%, 0.45% 34%, 0.25% 17%
+  );
+  border-radius: 3px;
+  background-image: url('./assets/card-paper-grain.svg');
+  box-shadow: inset 0 1px 0 #ffffff50, inset 0 -2px 4px #362f2212;
+}
+#aboutme .about-note-text .about-paper-ref-pink {
+  background: #ecc4c3 url('./assets/card-paper-grain.svg') !important;
+}
+#aboutme .about-note-text .about-paper-ref-pink::before { display: none; }
+#aboutme .about-note-text .about-paper-ref-grid {
+  background-image:
+    linear-gradient(#9ea76b35 1px, transparent 1px),
+    linear-gradient(90deg, #9ea76b35 1px, transparent 1px),
+    url('./assets/card-paper-grain.svg');
+  background-size: 18px 18px, 18px 18px, auto;
+}
+#aboutme .about-stack-shell > .paper-crumple {
+  width: calc(100% + 48px);
+  margin-inline: -24px;
+}
+
+/* A scrapbook-style 35mm reel between About and Experience. */
+.film-memories {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 5px 0 50px;
+  background-color: #f4f0e7;
+  background-image: url('./assets/paper-grain.svg');
+  color: #362f22;
+}
+.film-strip-window {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  overflow: hidden;
+  filter: drop-shadow(2px 7px 5px #2b242029);
+  transform: rotate(-0.45deg) scale(1.01);
+}
+.film-strip-track {
+  display: flex;
+  width: max-content;
+  animation: film-strip-roll 34s linear infinite;
+  will-change: transform;
+}
+.film-strip-window:hover .film-strip-track,
+.film-strip-window:focus-within .film-strip-track { animation-play-state: paused; }
+.film-strip-set {
+  position: relative;
+  display: flex;
+  flex: none;
+  gap: 8px;
+  padding: 25px 10px;
+  background: #181714;
+  border-top: 2px solid #050505;
+  border-bottom: 2px solid #050505;
+  box-shadow: inset 0 2px 0 #f4f0e71a, inset 0 -2px 0 #f4f0e714;
+}
+.film-strip-set::before,
+.film-strip-set::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 9px;
+  background: repeating-linear-gradient(90deg, transparent 0 7px, #f4f0e7 7px 17px, transparent 17px 24px);
+  opacity: 0.94;
+}
+.film-strip-set::before { top: 6px; transform: skewX(-3deg); }
+.film-strip-set::after { bottom: 6px; transform: skewX(2deg); }
+.film-frame {
+  position: relative;
+  flex: none;
+  width: clamp(154px, 18vw, 248px);
+  height: clamp(108px, 12.5vw, 172px);
+  margin: 0;
+  overflow: hidden;
+  border: 3px solid #050505;
+  border-radius: 2px 5px 3px 4px / 4px 2px 5px 3px;
+  background: #d8d0bd;
+  box-shadow: inset 0 0 0 1px #f8f1df40, 1px 0 0 #f4f0e738, -1px 1px 0 #050505;
+}
+.film-frame:nth-child(3n + 1) { transform: rotate(-0.35deg); }
+.film-frame:nth-child(3n + 2) { transform: translateY(1px) rotate(0.28deg); }
+.film-frame:nth-child(3n) { transform: rotate(-0.12deg); }
+.film-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.88) contrast(0.95) sepia(0.08);
+}
+.film-frame::after {
+  content: '';
+  position: absolute;
+  inset: 3px 2px 2px 4px;
+  pointer-events: none;
+  border: 1px dashed #fff9e83d;
+  border-radius: 3px 1px 4px 2px;
+  transform: rotate(0.25deg);
+}
+.film-frame-number {
+  position: absolute;
+  z-index: 2;
+  right: 7px;
+  bottom: 4px;
+  color: #fff9e8;
+  font: 9px/1 'Inter', sans-serif;
+  letter-spacing: 0.12em;
+  opacity: 0.78;
+  text-shadow: 0 1px 2px #000;
+}
+.film-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-content: center;
+  gap: 6px;
+  text-align: center;
+  color: #69604f;
+  background:
+    linear-gradient(115deg, transparent 45%, #fff9e52e 50%, transparent 55%),
+    url('./assets/card-paper-grain.svg'),
+    #d8d0bd;
+}
+.film-photo-placeholder > span { font: 36px/1 'Caveat', cursive; }
+.film-photo-placeholder small {
+  font: 700 12px/1 'Caveat', cursive;
+  letter-spacing: 0.04em;
+  transform: rotate(-2deg);
+}
+@keyframes film-strip-roll {
+  to { transform: translateX(-50%); }
+}
+@media (max-width: 700px) {
+  #aboutme { padding-bottom: 22px; }
+  .film-memories { padding: 2px 0 38px; }
+  .film-strip-set { gap: 6px; padding-top: 23px; padding-bottom: 23px; }
+  .film-strip-set::before,
+  .film-strip-set::after { height: 10px; background-size: auto 10px; }
+  .film-strip-set::before { top: 6px; }
+  .film-strip-set::after { bottom: 6px; }
+  .film-frame { width: 168px; height: 116px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .film-strip-track { animation: none; }
+  .film-strip-window { overflow-x: auto; scrollbar-width: thin; }
+  .film-strip-set[aria-hidden='true'] { display: none; }
+}
+
 .paper-section-note { margin: -12px 0 40px; font: 15px/1.7 'Nunito', sans-serif; color: #6b6559; }
 .experience-correspondence { max-width: 1150px; margin: 0 auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 36px; }
 .experience-letter {
@@ -245,12 +413,14 @@ body {
 .experience-letter .experience-letter-organization { font: 24px 'Caveat', cursive; color: #6d7a67; margin-top: 16px; }
 .experience-letter h3 { font: 500 36px/1.1 'Cormorant Garamond', serif; margin: 10px 0 20px; }
 .experience-letter > p:last-child { font: 14px/1.9 'Nunito', sans-serif; color: #514b40; }
-#projects { padding-top: 82px; }
+#projects { padding-top: 108px; }
 #contactme .contact-terminal-shell {
-  background: #e7dfd1;
-  border: 1px solid #222222;
+  background:
+    repeating-linear-gradient(90deg, #ffffff08 0 1px, transparent 1px 7px),
+    #3a3a3a;
+  border: 2px solid #262626;
   border-radius: 8px;
-  box-shadow: 5px 8px 15px #00000030;
+  box-shadow: 5px 8px 15px #00000045;
 }
 #contactme .contact-terminal { border: 1px solid #222222; border-radius: 4px; background: #f4f0e7; box-shadow: none; }
 #contactme .contact-terminal-header { background: #ded4c3; border-bottom: 1px solid #222222; }
